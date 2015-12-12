@@ -14,7 +14,6 @@ from nltk.tokenize import RegexpTokenizer
 from nltk.corpus import stopwords
 from nltk.stem.wordnet import WordNetLemmatizer
 from nltk.stem.porter import PorterStemmer
-
 from bs4 import BeautifulSoup as BS
 
 def nltkProcess(sentence):
@@ -43,29 +42,39 @@ def nltkProcess(sentence):
     
     
 
-def comment(question, outputPath):
+def comment(question, qid, outputPath):
     if not question:
         print "Empty question in comment()!"
         exit()
     if isfile(outputPath):
         print "Invalid output file path! Directory expected!"
         exit()
-        
+    
+    cid = []
+    cuserid = []
+    cgold = []
+    cgold_yn = []
+    
     commentSet = [a for a in question.find_all('comment')]
     for each in commentSet:
-        cid = each['cid']
-        cuserid = each['cuserid']
+        cid.append(each['cid'])
+        cuserid.append(each['cuserid'])
+        cgold.append(each['cgold'])
+        cgold_yn.append(each['cgold_yn'])
+        
         csubject = str(each.csubject.get_text())
         cbody = str(each.cbody.get_text())
         if "RE" not in csubject:
             cbody = csubject + " " + cbody
         cbody = nltkProcess(cbody)
         #print cbody
-        result = open(join(outputPath, cid), "w+")
-        for word in cbody:
-            result.write(word + " ")
-        result.close()
-    #return remain to do    
+        # output = outputPath + qid
+        # result = open(join(output, cid), "w+")
+        # for word in cbody:
+            # result.write(word + " ")
+        # result.close()
+    
+    return cid, cuserid, cgold, cgold_yn
          
 
 def question(question, outputPath):   
@@ -75,11 +84,16 @@ def question(question, outputPath):
     if isfile(outputPath):
         print "Invalid output file path! Directory expected!"
         exit()
-
-    qid = question['qid']
-    quserid = question['quserid']
+       
+    qid = question['qid']   
     qcategory = question['qcategory']
-        
+    quserid = question['quserid']
+    qtype = question['qtype']
+    qgold_yn = question['qgold_yn']
+    
+    #os.system("mkdir " + outputPath + qid)  
+    output = join(outputPath, qid)
+    
     #deal with qsubject & qbody
     qsubject = str(question.qsubject.get_text()) 
     qbody = str(question.qbody.get_text())
@@ -87,13 +101,14 @@ def question(question, outputPath):
         qbody = qsubject + " " + qbody
     
     qbody = nltkProcess(qbody)
-    result = open(join(outputPath, qid), "w+")       
-    for word in qbody:
-        result.write(word + " ")
-    result.close()
+    
+    # result = open(join(output, qid), "w+")       
+    # for word in qbody:
+        # result.write(word + " ")
+    # result.close()
     print "qid: " + qid + "done!"
     #remain to do
-    return qcategory
+    return qid, qcategory, quserid, qtype, qgold_yn
         
 
 def main(inputFile, outputPath):   
@@ -102,16 +117,25 @@ def main(inputFile, outputPath):
         categorySet = {}
         questionSet = [a for a in content.find_all('question')]
         for each in questionSet:
-            category = question(each, outputPath)
-            if category not in categorySet:
-                categorySet[category] = 1
+            qid, qcategory, quserid, qtype, qgold_yn = question(each, outputPath)
+            if qcategory not in categorySet:
+                categorySet[qcategory] = 1
             else:
-                categorySet[category] += 1
-            comment(each, outputPath)
+                categorySet[qcategory] += 1
+                
+            cid, cuserid, cgold, cgold_yn = comment(each, qid, outputPath)
+            result = open("qcInfo", "a+")
+            result.write(qid + "\t" + qcategory + "\t" + quserid + "\t" + qtype + "\t" + qgold_yn + "\n")
+            if not cid:
+                print "cid empty!"
+                exit()
+            for i in range(len(cid)):
+                result.write(cid[i] + "\t" + cuserid[i] + "\t" + cgold[i] + "\t" + cgold_yn[i] + "\n")
+            result.close()
         #print categorySet
-        result = open("categoryInfo", "w+")
-        for category in categorySet:
-            result.write(category + "\t" + str(categorySet[category]) + "\n")
+        # result = open("categoryInfo", "w+")
+        # for category in categorySet:
+            # result.write(category + "\t" + str(categorySet[category]) + "\n")
         
 
 if __name__ == '__main__':

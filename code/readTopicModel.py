@@ -26,6 +26,10 @@ class TopicModel:
                 fileName = aList[1].strip().split("/")
                 file = fileName[len(fileName) - 1]
                 self.probability[file] = value 
-
-    def getProbability(self):
-        return self.probability
+        
+    def getProbability(self, file):
+        if file in self.probability:
+            return self.probability[file]
+        else:
+            print "Invalid file in Class TopicModel getProbability()!"
+            exit()

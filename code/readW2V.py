@@ -11,12 +11,14 @@ import numpy as np
 from utility import Utility
 
 class W2V:
-    def __init__(self, inputFile):
+    
+    def __init__(self, inputFile, dimension):
         self.vector = {}
+        self.dimension = int(dimension)
         with open(inputFile) as fin:
             for lineNum, line in enumerate(fin):
                 aList = line.strip().split(" ")
-                if len(aList) < 200:
+                if len(aList) < self.dimension:
                     #print lineNum
                     continue
                 value = []
@@ -33,8 +35,10 @@ class W2V:
             array = np.array(tmpList)
             return array
         else:
-            print vectorKey + ": Invalid vectorKey in Class W2V tmpNumpyArray()!"
-            exit()
+            #print vectorKey + ": Invalid vectorKey in Class W2V tmpNumpyArray()!"
+            #return an empty array
+            array = np.zeros(shape=(1, self.dimension))
+            return array
     
     def sentenceVector(self, sentence):
         aList = sentence.strip().split(" ")
