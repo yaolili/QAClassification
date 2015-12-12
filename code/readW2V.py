@@ -17,24 +17,36 @@ class W2V:
             for lineNum, line in enumerate(fin):
                 aList = line.strip().split(" ")
                 if len(aList) < 200:
-                    print lineNum
+                    #print lineNum
                     continue
                 value = []
                 for i in range(1, len(aList)):
-                    value.append(int(aList[i]))
+                    value.append(float(aList[i]))
                 self.vector[aList[0]] = value
     
     #def getVector(self):
         #return self.vector
+        
+    def __tmpNumpyArray(self, vectorKey):
+        if vectorKey in self.vector:
+            tmpList = self.vector[vectorKey]
+            array = np.array(tmpList)
+            return array
+        else:
+            print vectorKey + ": Invalid vectorKey in Class W2V tmpNumpyArray()!"
+            exit()
     
     def sentenceVector(self, sentence):
         aList = sentence.strip().split(" ")
         if not aList:
             print "sentence split error in Class W2V sentenceVector()!"
             exit()
-        for word in aList:
-            if word not in self.vector:
-                print word
-            
+
+        arr1 = self.__tmpNumpyArray(aList[0])
         
+        for i in range(1, len(aList) - 1):
+            arr2 = self.__tmpNumpyArray(aList[i])
+            arr1 = arr1 + arr2
+        return (arr1/len(aList)).tolist()    
+        #print arr1/len(aList)
 
