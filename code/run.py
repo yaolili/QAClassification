@@ -15,6 +15,7 @@ from utility import Utility
 from readW2V import W2V
 from readTopicModel import TopicModel
 from specialInfo import Info    
+from readTFIDF import Tfidf
    
 def writeResult(commentVectors, labelMapInt, outputFile):
     result = open(outputFile, "w+")
@@ -25,11 +26,17 @@ def writeResult(commentVectors, labelMapInt, outputFile):
         result.write("\n")
     result.close()
 
-def main(originalFile, w2vFile, w2vDimension, topicModelFile, topicModelDimension):
+def main(originalFile, w2vFile, w2vDimension, topicModelFile, topicModelDimension, infoInstance, tfidfInstance):
 
     bowDict = {}
     w2vDict = {}
     tmDict = {}
+    
+    cuserComQuser = {}  #cid, 0 or 1, compared with quserid
+    ansProDict = {}     #cid, category_cgold probability
+    userPostDict = {}   #cid, post probability 
+    tfidfDict = {}      #cid, tfidfScore
+    
     resultDict = {}
     
     utility = Utility()
@@ -37,11 +44,9 @@ def main(originalFile, w2vFile, w2vDimension, topicModelFile, topicModelDimensio
     tm = TopicModel(topicModelFile, topicModelDimension)
     
     files = [f for f in listdir(originalFile) if isdir(join(originalFile, f))]
-    #print files
     for directory in files:
         path = originalFile + directory
         fileList = [f for f in listdir(path) if isfile(join(path, f))]
-        #print fileList
         #question file
         with open(path + "/" + directory, "r") as fin:
             s1 = fin.read()
@@ -51,15 +56,33 @@ def main(originalFile, w2vFile, w2vDimension, topicModelFile, topicModelDimensio
         for each in fileList:
             if each == directory:
                 continue
-            completePath = path + "/" + each
-            #print completePath           
+            
+            qid = directory
+            cid = each
+            cuserid = infoInstance.cidToCuserid(cid)
+            cglod = infoInstance.cidToCgold(cid)            
+            quserid = infoInstance.cidToQuserid(cid)
+            qcategory = infoInstance.qidToCategory(qid)
+            
+            
+            if cuserid == quserid:
+                cuserComQuser[cid] = 1.0
+            else:
+                cuserComQuser[cid] = 0.0           
+            userPostDict[cid] = infoInstance.userIdPro(cuserid)           
+            key = qcategory + "_" + cglod
+            ansProDict[cid] = infoInstance.getCategoryAnsPro(key)
+            
+            tfidfDict[cid] = tfidfInstance.getTfidfScore(cid)
+                        
+            completePath = path + "/" + each          
             with open(completePath, "r") as fin:
                 s2 = fin.read()
                 #some questions & comments are empty after preProcessing
                 if not s1 or not s2:
-                    bowDict[each] = 0
-                    w2vDict[each] = 0
-                    tmDict[each] = 0
+                    bowDict[each] = 0.000000000001
+                    w2vDict[each] = 0.000000000001
+                    tmDict[each] = 0.000000000001
                     continue
 
                 bow = BOW(s1, s2)   
@@ -70,8 +93,6 @@ def main(originalFile, w2vFile, w2vDimension, topicModelFile, topicModelDimensio
                 vec2 = w2v.sentenceVector(s2)
                 score = utility.cosine(vec1, vec2)               
                 w2vDict[each] = score
-                w2vResult = open("w2vResult.txt", "a+")
-                w2vResult.write(each + "\t" + str(score) + "\n")
                 
                 t2 = tm.getProbability(each)
                 score = utility.cosine(t1, t2)
@@ -87,13 +108,17 @@ def main(originalFile, w2vFile, w2vDimension, topicModelFile, topicModelDimensio
         aList.append(bowDict[key])
         aList.append(w2vDict[key])
         aList.append(tmDict[key])
+        aList.append(cuserComQuser[key])
+        aList.append(ansProDict[key])
+        aList.append(userPostDict[key])
+        aList.append(tfidfDict[key])
         resultDict[key] = aList
     print "resultDict done!"
     return resultDict   
     
 
 if __name__ == '__main__':
-    if len(sys.argv) < 8:
+    if len(sys.argv) < 9:
         print "sys.argv[1]: original file path!"
         print "sys.argv[2}: w2v file"
         print "sys.argv[3]: w2v dimension"
@@ -101,12 +126,13 @@ if __name__ == '__main__':
         print "sys.argv[5]: topic model dimension"
         print "sys.argv[6]: qcInfo"
         print "sys.argv[7]: format result file"
+        print "sys.argv[8]: tfidf file"
         exit()
     
-    
-    commentVectors = main(sys.argv[1], sys.argv[2], sys.argv[3], sys.argv[4], sys.argv[5])
     spInfo = Info(sys.argv[6])
-    writeResult(commentVectors, spInfo.labelMapInt(), sys.argv[7])
+    tfidfInstance = Tfidf(sys.argv[8])
+    commentVectors = main(sys.argv[1], sys.argv[2], sys.argv[3], sys.argv[4], sys.argv[5], spInfo, tfidfInstance)
+    writeResult(commentVectors, spInfo.labelToInt(), sys.argv[7])
 
     
 

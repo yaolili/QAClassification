@@ -11,8 +11,11 @@ class Info:
         self.labelMapInt = {}
         self.cidMapQid = {}
         self.cidMapCuserid = {}
+        self.cidMapCgold = {}
         self.qidMapQuserid = {}
-        self.categroyAnsPro = {}
+        self.qidMapCategory = {}
+        self.categoryAnsPro = {}
+        self.userId = {}
         with open(qcInfo, "r")as fin:
             for line in fin:
                 aList = line.strip().split("\t")
@@ -21,39 +24,107 @@ class Info:
                     qid = aList[0]
                     qcategory = aList[1]
                     quserid = aList[2]
-                    self.qidMapQuserid[qid] = quserid     
+                    self.qidMapQuserid[qid] = quserid  
+                    self.qidMapCategory[qid] = qcategory
+                    
+                    if quserid not in self.userId:
+                        self.userId[quserid] = 1
+                    else:
+                        self.userId[quserid] += 1
                 #comment line
                 else:
                     cid = aList[0]
                     cuserid = aList[1]
                     cgold = aList[2]
-                    self.cidMapCuserid[cid] = qid
+                    self.cidMapQid[cid] = qid
                     self.cidMapCuserid[cid] = cuserid
-                    self.labelMapInt[cid] = labelToInt(cgold)
+                    self.cidMapCgold[cid] = cgold
+                    self.labelMapInt[cid] = self.__labelToInt(cgold)
+                    
+                    if cuserid not in self.userId:
+                        self.userId[cuserid] = 1
+                    else:
+                        self.userId[cuserid] += 1
                     
                     key = qcategory + "_" + cgold
-                    if key not in categroyAnsPro:
-                        self.categroyAnsPro[key] = 0
+                    if key not in self.categoryAnsPro:
+                        self.categoryAnsPro[key] = 1
                     else:
-                        self.categroyAnsPro[key] += 1
-                        
-
-    def labelMapInt(self):
-        return self.labelMapInt
-        
-    def cidMapQid(self):
-        return self.cidMapQid
+                        self.categoryAnsPro[key] += 1
     
-    def cidMapCuserid(self):
-        return self.cidMapCuserid
+    def userIdPro(self, userId):
+        if userId not in self.userId:
+            print "Invalid userId in Class Info userIdPro()!"
+            exit()
+        allCount = 0
+        for id in self.userId:
+            allCount += self.userId[id]
+        count = self.userId[userId]
+        return float(count)/allCount
+   
+    
+    #remain to do
+    def labelToInt(self):
+        #key is cid, value is an [int] 
+        return self.labelMapInt
+
+    def cidToCuserid(self, cid):
+        if cid not in self.cidMapCuserid:
+            print "Invalid cid in Class Info cidToCuserid()!"
+            exit()
+        return self.cidMapCuserid[cid]
+    
+    def cidToCgold(self, cid):
+        if cid not in self.cidMapCgold:
+            print "Invalid cid in Class Info cidMapCgold()!"
+            exit()
+        return self.cidMapCgold[cid]
         
-    def qidMapQuserid(self):
-        return self.qidMapQuserid
+    
+    def qidToCategory(self, qid):
+        if qid not in self.qidMapCategory:
+            print "Invalid qid in Class Info qidMapCategory()!"
+            exit()
+        return self.qidMapCategory[qid]
+    
+    def cidToQuserid(self, cid):
+        if cid not in self.cidMapQid:
+            print "Invalid cid in Class Info cidToQuserid()!"
+            print self.cidMapQid
+            exit()
+        return self.qidMapQuserid[self.cidMapQid[cid]]
         
-    def categroyAnsPro(self):
-        return self.categroyAnsPro
+    
+    def cidToQid(self, cid):
+        if cid not in self.cidMapQid:
+            print "Invalid cid in Class Info cidMapQid()!"
+            exit()
+        return self.cidMapQid[cid]
+    
+    def cidToCuserid(self, cid):
+        if cid not in self.cidMapCuserid:
+            print "Invalid cid in Class Info cidMapCuserid()!"
+            exit()
+        return self.cidMapCuserid[cid]
         
-    def labelToInt(self, label):
+    def qidToQuserid(self, qid):
+        if qid not in self.qidMapQuserid:
+            print "Invalid qid in Class Info qidMapQuserid()!"
+            exit()
+        return self.qidMapQuserid[qid]
+        
+    def getCategoryAnsPro(self, categoryKey):
+        if categoryKey not in self.categoryAnsPro:
+            print "Invalid categoryKey in Class Info categoryAnsPro()!"
+            exit()           
+        allCount = 0
+        for categoryKey in self.categoryAnsPro:
+            allCount += self.categoryAnsPro[categoryKey]
+        count = self.categoryAnsPro[categoryKey]  
+        return float(count)/allCount
+               
+        
+    def __labelToInt(self, label):
         if(label == "Good"):
             value = 6
         elif(label == "Bad"):
