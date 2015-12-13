@@ -18,6 +18,7 @@ class BOW:
         self.allBag = {}
         list1 = s1.strip().split(" ")
         list2 = s2.strip().split(" ")
+        
         for w in list1:
             if w not in self.allBag:
                 self.allBag[w] = 0               
