@@ -30,7 +30,7 @@ def calculate_result(actual,pred):
 #引入数据
 
 
-fr_n = open("formatResult_2.txt")
+fr_n = open("formatResult7D.txt")
 
 fr_n.readline()  # skip the header
 
@@ -40,7 +40,12 @@ X = data[:, 1:]  # select columns 1 through end
 
 y = data[:, 0]   # select column 0, the stock price
 
-f = open("predict.txt")
+
+#X_train= data[:, 1:]  # select columns 1 through end
+
+#y_train= data[:, 0]   # select column 0, the stock price
+
+f = open("devResult.txt")
 
 f.readline()  # skip the header
 

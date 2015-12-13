@@ -4,7 +4,6 @@ import numpy as np
 import io,sys
 from sklearn import metrics
 from sklearn import svm
-from sklearn.ensemble import RandomForestClassifier
 
 #引入评价指标
 
@@ -20,7 +19,7 @@ def calculate_result(actual,pred):
     print 'f1-score:{0:.3f}'.format(metrics.f1_score(actual,pred));  
 
 
-f = open("formatResult_3.txt")
+f = open("formatResult7D.txt")
 
 f.readline()  # skip the header
 
@@ -30,13 +29,17 @@ X = data[:, 1:]  # select columns 1 through end
 
 y = data[:, 0]   # select column 0, the stock price
 
-clf = RandomForestClassifier(n_estimators=10)
+clf = tree.DecisionTreeClassifier()
+
+#clf = clf.fit(X, y)
 
 print("===performance on TEST===")
 
 # Split the data into a training set and a test set; 分为训练集 检验集
 
 X_train, X_dev, y_train, y_dev = train_test_split(X, y, random_state=0)
+
+#clf= svm.SVC(kernel='rbf')
 
 clf.fit(X_train,y_train)
 
