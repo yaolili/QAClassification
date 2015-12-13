@@ -25,9 +25,8 @@ class W2V:
                 for i in range(1, len(aList)):
                     value.append(float(aList[i]))
                 self.vector[aList[0]] = value
+                #print "len(value): " + str(len(value))
     
-    #def getVector(self):
-        #return self.vector
         
     def __tmpNumpyArray(self, vectorKey):
         if vectorKey in self.vector:
@@ -35,9 +34,13 @@ class W2V:
             array = np.array(tmpList)
             return array
         else:
-            #print vectorKey + ": Invalid vectorKey in Class W2V tmpNumpyArray()!"
-            #return an empty array
-            array = np.zeros(shape=(1, self.dimension))
+            #log = open("emptyVectorKey.txt", "a+")
+            #log.write(vectorKey + "\n")
+            #Whole sentence may be empty if you return an empty array for a word
+            #Thus it's invalid for division for cosine similarity
+            #array = np.zeros(self.dimension)
+            array = np.ones(self.dimension)
+            array = array / 1000000000000
             return array
     
     def sentenceVector(self, sentence):
@@ -47,9 +50,11 @@ class W2V:
             exit()
 
         arr1 = self.__tmpNumpyArray(aList[0])
-        
-        for i in range(1, len(aList) - 1):
+        #log = open("array.txt", "a+")
+        #log.write(str(arr1.tolist()) + "\n")
+        for i in range(1, len(aList)):
             arr2 = self.__tmpNumpyArray(aList[i])
+            #log.write(str(arr2.tolist()) + "\n")
             arr1 = arr1 + arr2
         return (arr1/len(aList)).tolist()    
         #print arr1/len(aList)

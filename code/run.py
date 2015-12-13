@@ -14,6 +14,16 @@ from bagOfWords import BOW
 from utility import Utility
 from readW2V import W2V
 from readTopicModel import TopicModel
+from specialInfo import Info    
+   
+def writeResult(commentVectors, labelMapInt, outputFile):
+    result = open(outputFile, "w+")
+    for key in commentVectors:
+        result.write(str(labelMapInt[key]) + " ")
+        for i in range(len(commentVectors[key])):
+            result.write(str(commentVectors[key][i]) + " ")
+        result.write("\n")
+    result.close()
 
 def main(originalFile, w2vFile, w2vDimension, topicModelFile, topicModelDimension):
 
@@ -58,8 +68,10 @@ def main(originalFile, w2vFile, w2vDimension, topicModelFile, topicModelDimensio
                 bowDict[each] = score
                                
                 vec2 = w2v.sentenceVector(s2)
-                score = utility.cosine(vec1, vec2)
+                score = utility.cosine(vec1, vec2)               
                 w2vDict[each] = score
+                w2vResult = open("w2vResult.txt", "a+")
+                w2vResult.write(each + "\t" + str(score) + "\n")
                 
                 t2 = tm.getProbability(each)
                 score = utility.cosine(t1, t2)
@@ -81,20 +93,22 @@ def main(originalFile, w2vFile, w2vDimension, topicModelFile, topicModelDimensio
     
 
 if __name__ == '__main__':
-    if len(sys.argv) < 6:
+    if len(sys.argv) < 8:
         print "sys.argv[1]: original file path!"
         print "sys.argv[2}: w2v file"
         print "sys.argv[3]: w2v dimension"
         print "sys.argv[4]: topic model file"
         print "sys.argv[5]: topic model dimension"
+        print "sys.argv[6]: qcInfo"
+        print "sys.argv[7]: format result file"
         exit()
     
-    result = main(sys.argv[1], sys.argv[2], sys.argv[3], sys.argv[4], sys.argv[5])
-    print len(result)
-    for key in result:
-        print key
-        print result[key]
-        exit()
+    
+    commentVectors = main(sys.argv[1], sys.argv[2], sys.argv[3], sys.argv[4], sys.argv[5])
+    spInfo = Info(sys.argv[6])
+    writeResult(commentVectors, spInfo.labelMapInt(), sys.argv[7])
+
+    
 
     
     
