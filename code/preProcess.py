@@ -15,6 +15,7 @@ from nltk.corpus import stopwords
 from nltk.stem.wordnet import WordNetLemmatizer
 from nltk.stem.porter import PorterStemmer
 from bs4 import BeautifulSoup as BS
+from getUrlTitle import UrlTitle
 
 def nltkProcess(sentence):
     if not sentence:
