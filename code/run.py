@@ -16,16 +16,84 @@ from readW2V import W2V
 from readTopicModel import TopicModel
 from specialInfo import Info    
 from readTFIDF import Tfidf
-   
+
+ 
+def sort(keyOrderList):
+    result = []
+    order = []
+    tmp = keyOrderList[0].strip().split("C")[0]
+    for i in range(len(keyOrderList)):
+        prefix, num = keyOrderList[i].strip().split("C")
+        if prefix == tmp:
+            order.append(int(num))
+        else:
+            order = sorted(order)
+            for j in range(len(order)):
+                string = tmp + "C" + str(order[j])
+                result.append(string)
+            order = []
+            tmp = prefix
+            order.append(int(num))
+    order = sorted(order)   
+    for j in range(len(order)):
+        string = tmp + "C" + str(order[j])
+        result.append(string)
+    return result
+
+ 
 def writeResult(commentVectors, labelMapInt, outputFile):
+    labelDict = {1:0, 2:0, 3:0, 4:0, 5:0, 6:0}      #int label, count number
+    goodDict = {}                                   #cid, label
     result = open(outputFile, "w+")
-    for key in commentVectors:
-        result.write(str(labelMapInt[key]) + " ")
+    aList = sorted(commentVectors.iterkeys())
+    aList = sort(aList)
+    #for key in sorted(commentVectors.iterkeys()):
+    #for key in commentVectors:
+    for i in range(len(aList)):
+        key = aList[i]
+        '''
+        #test usage!
+        if labelMapInt[key] not in labelDict:
+            labelDict[labelMapInt[key]] = 1
+        else:
+            labelDict[labelMapInt[key]] += 1
+        '''    
+        file = open("cOrder.txt", "a+")
+        file.write(key + "\n")
+        label = labelMapInt[key]        
+        result.write(str(label) + " ")  
         for i in range(len(commentVectors[key])):
             result.write(str(commentVectors[key][i]) + " ")
         result.write("\n")
+        '''
+        #label 4 or 5 double write the ones whose w2v score plus topic model score > 1.0
+        if float(commentVectors[key][1]) + float(commentVectors[key][2]) > 1.0 and (label == 4 or label == 5):
+            result.write(str(label) + " ")  
+            for i in range(len(commentVectors[key])):
+                result.write(str(commentVectors[key][i]) + " ")
+            result.write("\n")
+        '''
+        '''
+        #test usage!
+        if float(commentVectors[key][1]) + float(commentVectors[key][2]) > 1.0:
+            goodDict[key] = label
+            labelDict[label] += 1
+        '''
     result.close()
-
+    '''
+    #test usage!
+    result = open("labelCount.txt", "w+")
+    for key in labelDict:
+        result.write(str(key) + "\t" + str(labelDict[key]) + "\n")
+    result.close()
+    
+    #test usage
+    result = open("goodCount.txt", "w+")
+    for key in goodDict:
+        result.write(str(key) + "\t" + str(goodDict[key]) + "\n")
+    result.close()
+    '''
+    
 def main(originalFile, w2vFile, w2vDimension, topicModelFile, topicModelDimension, infoInstance, tfidfInstance):
 
     bowDict = {}
@@ -52,6 +120,7 @@ def main(originalFile, w2vFile, w2vDimension, topicModelFile, topicModelDimensio
             s1 = fin.read()
             vec1 = w2v.sentenceVector(s1)
             t1 = tm.getProbability(directory)
+            
         #comment file
         for each in fileList:
             if each == directory:
@@ -62,8 +131,7 @@ def main(originalFile, w2vFile, w2vDimension, topicModelFile, topicModelDimensio
             cuserid = infoInstance.cidToCuserid(cid)
             cglod = infoInstance.cidToCgold(cid)            
             quserid = infoInstance.cidToQuserid(cid)
-            qcategory = infoInstance.qidToCategory(qid)
-            
+            qcategory = infoInstance.qidToCategory(qid)           
             
             if cuserid == quserid:
                 cuserComQuser[cid] = 1.0
