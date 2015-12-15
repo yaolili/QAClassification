@@ -39,6 +39,11 @@ class Info:
                     self.cidMapQid[cid] = qid
                     self.cidMapCuserid[cid] = cuserid
                     self.cidMapCgold[cid] = cgold
+                    
+                    if self.__labelToInt(cgold) == 0:
+                        print "Invalid cgold in Class Info __init__()!"
+                        print cgold
+                        exit()
                     self.labelMapInt[cid] = self.__labelToInt(cgold)
                     
                     if cuserid not in self.userId:
@@ -51,6 +56,7 @@ class Info:
                         self.categoryAnsPro[key] = 1
                     else:
                         self.categoryAnsPro[key] += 1
+        
     
     def userIdPro(self, userId):
         if userId not in self.userId:
@@ -114,14 +120,27 @@ class Info:
         return self.qidMapQuserid[qid]
         
     def getCategoryAnsPro(self, categoryKey):
-        if categoryKey not in self.categoryAnsPro:
-            print "Invalid categoryKey in Class Info categoryAnsPro()!"
-            exit()           
+        aList = []
+        label = ["Good", "Bad", "Potential", "Dialogue", "Not English", "Other"]
+        for each in label:
+            key = categoryKey + "_" + each
+            aList.append(key)
+        #here aList is : categoryKey_labelItem
+        
         allCount = 0
-        for categoryKey in self.categoryAnsPro:
-            allCount += self.categoryAnsPro[categoryKey]
-        count = self.categoryAnsPro[categoryKey]  
-        return float(count)/allCount
+        eachCount = []
+        result = []
+        for i in range(len(aList)):
+            if aList[i] not in self.categoryAnsPro:
+                #print aList[i] + ". Invalid categoryKey in Class Info categoryAnsPro()!"
+                eachCount.append(0.0)
+            else:
+                eachCount.append(float(self.categoryAnsPro[aList[i]]))
+                allCount += self.categoryAnsPro[aList[i]]   
+        for i in range(len(eachCount)):
+            result.append(eachCount[i]/allCount)
+        return result
+
                
         
     def __labelToInt(self, label):
@@ -133,7 +152,7 @@ class Info:
             value = 4
         elif(label == "Dialogue"):
             value = 3
-        elif(label == "non-English"):
+        elif(label == "Not English"):
             value = 2
         elif(label == "Other"):
             value = 1
