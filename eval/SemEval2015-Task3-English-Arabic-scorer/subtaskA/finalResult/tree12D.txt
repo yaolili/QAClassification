@@ -1,0 +1,60 @@
+
+<<< I. FINE-GRAINED EVALUATION >>>
+
+Confusion matrix:
+        Good  Bad Pot. Dial <-- classified as
+      +--------------------+ -SUM-
+ Good | 585   86   86  118 |  875
+  Bad | 116   66   24   65 |  271
+ Pot. | 117   27   11   32 |  187
+ Dial |  98   47   38  129 |  312
+      +--------------------+
+ -SUM-  916  226  159  344 
+
+Accuracy (calculated for the above confusion matrix) = 791/1645 = 48.09%
+
+Results for the individual labels:
+      Good :    P =  585/ 916 =  63.86%     R =  585/ 875 =  66.86%     F1 =  65.33%
+       Bad :    P =   66/ 226 =  29.20%     R =   66/ 271 =  24.35%     F1 =  26.56%
+      Pot. :    P =   11/ 159 =   6.92%     R =   11/ 187 =   5.88%     F1 =   6.36%
+      Dial :    P =  129/ 344 =  37.50%     R =  129/ 312 =  41.35%     F1 =  39.33%
+
+Micro-averaged result:
+P =  791/1645 =  48.09%     R =  791/1645 =  48.09%     F1 =  48.09%
+
+MACRO-averaged result:
+P =  34.37%	R =  34.61%	F1 =  34.39%
+
+
+
+
+<<< II. COARSE EVALUATION >>>
+
+Confusion matrix:
+        Good  Bad Pot. <-- classified as
+      +---------------+ -SUM-
+ Good | 585  204   86 |  875
+  Bad | 214  307   62 |  583
+ Pot. | 117   59   11 |  187
+      +---------------+
+ -SUM-  916  570  159 
+
+Accuracy (calculated for the above confusion matrix) = 903/1645 = 54.89%
+
+Results for the individual labels:
+      Good :    P =  585/ 916 =  63.86%     R =  585/ 875 =  66.86%     F1 =  65.33%
+       Bad :    P =  307/ 570 =  53.86%     R =  307/ 583 =  52.66%     F1 =  53.25%
+      Pot. :    P =   11/ 159 =   6.92%     R =   11/ 187 =   5.88%     F1 =   6.36%
+
+Micro-averaged result:
+P =  903/1645 =  54.89%     R =  903/1645 =  54.89%     F1 =  54.89%
+
+MACRO-averaged result:
+P =  41.55%	R =  41.80%	F1 =  41.65%
+
+
+
+
+<<< III. OFFICIAL SCORE >>>
+
+MACRO-averaged coarse-grained F1:  41.65%

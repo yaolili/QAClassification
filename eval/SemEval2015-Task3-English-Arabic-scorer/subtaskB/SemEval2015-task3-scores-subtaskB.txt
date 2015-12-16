@@ -1,0 +1,31 @@
+
+<<< I. EVALUATION >>>
+
+Confusion matrix:
+         Yes   No Uns. <-- classified as
+      +---------------+ -SUM-
+  Yes |   7    5    4 |   16
+   No |   2    2    4 |    8
+ Uns. |   6    1    3 |   10
+      +---------------+
+ -SUM-   15    8   11 
+
+Accuracy (calculated for the above confusion matrix) = 12/34 = 35.29%
+
+Results for the individual labels:
+       Yes :    P =    7/  15 =  46.67%     R =    7/  16 =  43.75%     F1 =  45.16%
+        No :    P =    2/   8 =  25.00%     R =    2/   8 =  25.00%     F1 =  25.00%
+      Uns. :    P =    3/  11 =  27.27%     R =    3/  10 =  30.00%     F1 =  28.57%
+
+Micro-averaged result:
+P =   12/  34 =  35.29%     R =   12/  34 =  35.29%     F1 =  35.29%
+
+MACRO-averaged result:
+P =  32.98%	R =  32.92%	F1 =  32.91%
+
+
+
+
+<<< II. OFFICIAL SCORE >>>
+
+MACRO-averaged F1:  32.91%
