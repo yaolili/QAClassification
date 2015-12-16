@@ -5,6 +5,7 @@ import os,sys
 from sklearn import tree
 from sklearn import svm
 from sklearn import metrics
+from sklearn.preprocessing import Imputer
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.ensemble import GradientBoostingClassifier
 from sklearn.cross_validation import train_test_split
@@ -24,6 +25,14 @@ class Classification():
         f = open(devFile)
         pre = np.loadtxt(f)
         X_test = pre[:, 1:]
+        
+        X_test = Imputer().fit_transform(X_test)
+        
+        #test usage!
+        if np.isnan(X_test).any():
+            print "nan in X_test!"
+            exit()
+            
         self.y_test = pre[:, 0] 
         f.close()
         

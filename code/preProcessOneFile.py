@@ -7,6 +7,7 @@
 
 import sys
 import os
+import re
 import nltk
 from os.path import isfile, join
 from nltk import stem
@@ -31,13 +32,13 @@ def nltkProcess(sentence):
     for w in noStopwords:
         lmtzr.append(WordNetLemmatizer().lemmatize(w))
     #print lmtzr
-    #return lmtzr
+    return lmtzr
     
-    stem = []
-    for w in lmtzr:
-        stem.append(PorterStemmer().stem(w))
-    #print stem
-    return stem 
+    # stem = []
+    # for w in lmtzr:
+        # stem.append(PorterStemmer().stem(w))
+    # #print stem
+    # return stem 
     
     
 
@@ -47,24 +48,38 @@ def comment(question, qid, outputPath):
         exit()
         
     commentSet = [a for a in question.find_all('comment')]
+    cid = []
+    cuserid = []
     for each in commentSet:
-        cid = each['cid']
-        cuserid = each['cuserid']
+        cid.append(each['cid'])
+        cuserid.append(each['cuserid'])
+
         csubject = str(each.csubject.get_text())
         cbody = str(each.cbody.get_text())
+        
         if "RE" not in csubject:
             cbody = csubject + " " + cbody
-        cbody = nltkProcess(cbody)
-        #print cbody
+        
+        #has url or not 
+        # urls = re.findall('http[s]?://(?:[a-zA-Z]|[0-9]|[$-_@.&+]|(?:%[0-9a-fA-F][0-9a-fA-F]))+', cbody)
+        # result2 = open("hasUrlTest.txt", "a+")
+        # if len(urls):  
+            # result2.write(cid + "\t" + "1" + "\n")
+        # else:
+            # result2.write(cid + "\t" + "0" + "\n")
+        
+        cbody = nltkProcess(cbody) 
+
+        # result3 = open("../order/prefixTest.txt", "a+")
+        # result3.write(cid + "\n")
         # result1 = open(outputPath, "a+")
-        # for word in cbody:
-            # result1.write(word + " ")
-        # result1.write("\n")
-        # result1.close()
-        result2 = open("idOrderDev.txt", "a+")
-        result2.write(cid + "\t" + qid + "\n")
-        result2.close()
-    #return remain to do    
+        # if cgold == "Potential":
+            # result1.write(cid + ",\t" + cuserid + ",\t")
+            # for word in cbody:
+                # result1.write(word + " ")
+            # result1.write("\n")
+    #result1.close()
+    return cid, cuserid  
          
 
 def question(question, outputPath):   
@@ -75,7 +90,8 @@ def question(question, outputPath):
     qid = question['qid']
     quserid = question['quserid']
     qcategory = question['qcategory']
-        
+    qtype = question['qtype']
+    
     #deal with qsubject & qbody
     qsubject = str(question.qsubject.get_text()) 
     qbody = str(question.qbody.get_text())
@@ -83,27 +99,36 @@ def question(question, outputPath):
         qbody = qsubject + " " + qbody
     
     qbody = nltkProcess(qbody)
-    result2 = open("idOrderDev.txt", "a+")
-    result2.write(qid + "\t" + qid + "\n")
-    result2.close()
-    # result1 = open(outputPath, "a+")   
+
+    # result1 = open(outputPath, "a+") 
+    # result1.write(qid + ",\t" + quserid + ",\t" + qcategory + ",\t")
     # for word in qbody:
         # result1.write(word + " ")
     # result1.write("\n")
     # result1.close()
     print "qid: " + qid + "done!"
     #remain to do
-    return qid, qcategory
+    return qid, qcategory, quserid, qtype
         
 
-def main(inputFile, outputPath):   
+def main(inputFile, outputPath):  
+    result = open("qcInfo.test", "w+")
     with open(inputFile, "r") as fileContent:
         content = BS(fileContent.read(), "lxml")
         categorySet = {}
         questionSet = [a for a in content.find_all('question')]
         for each in questionSet:
-            qid, qcategory = question(each, outputPath)
-            comment(each, qid, outputPath)
+            qid, qcategory, quserid, qtype = question(each, outputPath)
+            cid, cuserid = comment(each, qid, outputPath)
+            
+            
+            result.write(qid + "\t" + qcategory + "\t" + quserid + "\t" + qtype + "\n")
+            if not cid:
+                print "cid empty!"
+                exit()
+            for i in range(len(cid)):
+                result.write(cid[i] + "\t" + cuserid[i] + "\n")
+            
         
 
 if __name__ == '__main__':

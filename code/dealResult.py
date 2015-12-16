@@ -9,6 +9,22 @@ import os
 import sys
 import linecache
 
+def labelToString(label):
+    if label == "6":
+        string = "Good"
+    elif label == "5":
+        string = "Bad"
+    elif label == "4":
+        string = "Potential"
+    elif label == "3":
+        string = "Dialogue"
+    elif label == "2":
+        string = "Not English"
+    else:
+        string = "Other"
+    return string
+    
+
 if __name__ == "__main__":
     if len(sys.argv) < 4:
         print "sys.argv[1]: prefix order file"
@@ -25,6 +41,6 @@ if __name__ == "__main__":
             # print line
             # print label
             # exit()
-            result.write(line + "\t" + str(label) + "\n")
+            result.write(line + "\t" + labelToString(label) + "\n")
             
     result.close()       

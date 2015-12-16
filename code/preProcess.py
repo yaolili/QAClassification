@@ -30,15 +30,14 @@ def nltkProcess(sentence):
     for w in noStopwords:
         lmtzr.append(WordNetLemmatizer().lemmatize(w))
     #print lmtzr
-    
-    '''
+
     stem = []
     for w in lmtzr:
         stem.append(PorterStemmer().stem(w))
-    print stem
-    #return stem
-    '''
-    return lmtzr
+    #print stem
+    return stem
+    
+    #return lmtzr
     
     
 
@@ -130,12 +129,12 @@ def main(inputFile, outputPath):
             
             #question & comment info
             # result = open("qcInfo.dev", "a+")
-            # result.write(qid + "\t" + qcategory + "\t" + quserid + "\t" + qtype + "\t" + qgold_yn + "\n")
+            # result.write(qid + "\t" + qcategory + "\t" + quserid + "\t" + qtype + "\n")
             # if not cid:
                 # print "cid empty!"
                 # exit()
             # for i in range(len(cid)):
-                # result.write(cid[i] + "\t" + cuserid[i] + "\t" + cgold[i] + "\n")
+                # result.write(cid[i] + "\t" + cuserid[i] + "\n")
             # result.close()
             
         # print "qcInfo.dev done!"

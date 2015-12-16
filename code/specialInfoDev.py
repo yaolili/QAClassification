@@ -1,31 +1,31 @@
 #-*- coding:utf-8 -*-
 # AUTHOR:   yaolili
 # FILE:     specialInfo.py
-# ROLE:     TODO (some explanation)
+# ROLE:     used for dev & test set
 # CREATED:  2015-12-13 16:56:37
-# MODIFIED: 2015-12-16 08:47:43
+# MODIFIED: 2015-12-13 16:56:41
 
 class Info:
 
     def __init__(self, qcInfo):
-        self.labelMapInt = {}
+        #self.labelMapInt = {}
         self.cidMapQid = {}
         self.cidMapCuserid = {}
         self.cidMapCgold = {}
         self.qidMapQuserid = {}
         self.qidMapCategory = {}
-        self.categoryAnsPro = {}
+        #self.categoryAnsPro = {}
         self.userId = {}
         with open(qcInfo, "r")as fin:
             for line in fin:
                 aList = line.strip().split("\t")
-                #in train or dev set, question line len == 5
-                #in test set, question line len == 4  
-                #notice, in train or dev set, should be != rather than ==
-                if len(aList) != 4:
+                #in train, question line len == 5
+                #in dev or test set, question line len == 4  
+                if len(aList) == 4:
                     qid = aList[0]
                     qcategory = aList[1]
                     quserid = aList[2]
+                    qtype = aList[3]
                     self.qidMapQuserid[qid] = quserid  
                     self.qidMapCategory[qid] = qcategory
                     
@@ -38,27 +38,16 @@ class Info:
                 else:
                     cid = aList[0]
                     cuserid = aList[1]
-                    cgold = aList[2]
+
                     self.cidMapQid[cid] = qid
                     self.cidMapCuserid[cid] = cuserid
-                    self.cidMapCgold[cid] = cgold
-                    
-                    if self.__labelToInt(cgold) == 0:
-                        print "Invalid cgold in Class Info __init__()!"
-                        print cgold
-                        exit()
-                    self.labelMapInt[cid] = self.__labelToInt(cgold)
                     
                     if cuserid not in self.userId:
                         self.userId[cuserid] = 1
                     else:
                         self.userId[cuserid] += 1
                     
-                    key = qcategory + "_" + cgold
-                    if key not in self.categoryAnsPro:
-                        self.categoryAnsPro[key] = 1
-                    else:
-                        self.categoryAnsPro[key] += 1
+                   
         
     
     def userIdPro(self, userId):
@@ -71,11 +60,6 @@ class Info:
         count = self.userId[userId]
         return float(count)/allCount
    
-    
-    #remain to do
-    def labelToInt(self):
-        #key is cid, value is an [int] 
-        return self.labelMapInt
 
     def cidToCuserid(self, cid):
         if cid not in self.cidMapCuserid:
@@ -122,27 +106,6 @@ class Info:
             exit()
         return self.qidMapQuserid[qid]
         
-    def getCategoryAnsPro(self, categoryKey):
-        aList = []
-        label = ["Good", "Bad", "Potential", "Dialogue", "Not English", "Other"]
-        for each in label:
-            key = categoryKey + "_" + each
-            aList.append(key)
-        #here aList is : categoryKey_labelItem
-        
-        allCount = 0
-        eachCount = []
-        result = []
-        for i in range(len(aList)):
-            if aList[i] not in self.categoryAnsPro:
-                #print aList[i] + ". Invalid categoryKey in Class Info categoryAnsPro()!"
-                eachCount.append(0.0)
-            else:
-                eachCount.append(float(self.categoryAnsPro[aList[i]]))
-                allCount += self.categoryAnsPro[aList[i]]   
-        for i in range(len(eachCount)):
-            result.append(eachCount[i]/allCount)
-        return result
 
                
         
