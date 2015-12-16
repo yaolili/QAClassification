@@ -1,7 +1,7 @@
 #-*- coding:utf-8 -*-
 # AUTHOR:   yaolili
 # FILE:     bagOfWords.py
-# ROLE:     TODO (some explanation)
+# ROLE:     given two sentences, build bag of words model. 
 # CREATED:  2015-12-12 10:42:19
 # MODIFIED: 2015-12-12 10:42:27
 

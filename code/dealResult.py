@@ -1,7 +1,7 @@
 #-*- coding:utf-8 -*-
 # AUTHOR:   yaolili
 # FILE:     dealResult.py
-# ROLE:     TODO (some explanation)
+# ROLE:     merge cid and its predicating label
 # CREATED:  2015-12-14 19:58:53
 # MODIFIED: 2015-12-14 19:58:55
 
@@ -23,7 +23,11 @@ def labelToString(label):
     else:
         string = "Other"
     return string
-    
+ 
+ 
+#prefix order file is cid list, something like "Q2903_C1"
+#label order file is its predicating label list
+#notice that we use a number as a label instead of string when processing, eg "6" for "Good" 
 
 if __name__ == "__main__":
     if len(sys.argv) < 4:

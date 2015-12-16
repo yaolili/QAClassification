@@ -1,7 +1,7 @@
 #-*- coding:utf-8 -*-
 # AUTHOR:   yaolili
 # FILE:     runClassification.py
-# ROLE:     TODO (some explanation)
+# ROLE:     run classifier in Classification and get the result of prediction
 # CREATED:  2015-12-15 09:28:02
 # MODIFIED: 2015-12-15 09:28:03
 

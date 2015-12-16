@@ -1,12 +1,13 @@
 #-*- coding:utf-8 -*-
 # AUTHOR:   yaolili
 # FILE:     readCategoryPro.py
-# ROLE:     TODO (some explanation)
+# ROLE:     read categoryProFile and you can determine the specific category pro
 # CREATED:  2015-12-15 22:52:18
 # MODIFIED: 2015-12-15 22:52:19
 
-import sys
-import os
+
+#the format of categoryProFile is something like this:
+#category + \t + pro1 + \t + pro2 + \t + pro3 + \t + pro4 + \t + pro5 + \t + pro6 + \n
 
 class CategoryPro:
     def __init__(self, categoryProFile):

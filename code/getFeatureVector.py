@@ -1,7 +1,7 @@
 #-*- coding:utf-8 -*-
 # AUTHOR:   yaolili
 # FILE:     getFeatureVector.py
-# ROLE:     TODO (some explanation)
+# ROLE:     generate feature vector file
 # CREATED:  2015-12-12 11:27:16
 # MODIFIED: 2015-12-12 11:33:14
 
@@ -18,6 +18,11 @@ from specialInfo import Info
 from readTFIDF import Tfidf
 from hasUrl import Url
  
+#notice, it's nessary to sort keyOrderList(that is cid list)
+#because the sorted() function in python will return the order like following
+#"Q2902_C1", "Q2902_C10", "Q2902_C2"
+#and "Q2902_C1", "Q2902_C2", "Q2902_C10" is expected actually 
+
 def sort(keyOrderList):
     result = []
     order = []
@@ -40,29 +45,23 @@ def sort(keyOrderList):
         result.append(string)
     return result
 
- 
+#write feature vector file
 def writeResult(commentVectors, labelMapInt, outputFile, prefixFile, type):
     if not (type == "1" or type == "0"):
         print "Invalid type in writeResult()!"
         exit()
-        
-    labelDict = {1:0, 2:0, 3:0, 4:0, 5:0, 6:0}      #int label, count number
-    goodDict = {}                                   #cid, label
+
     result = open(outputFile, "w+")
-    file = open(prefixFile, "w+")
+    prefixResult = open(prefixFile, "w+")
     aList = sorted(commentVectors.iterkeys())
     aList = sort(aList)
+    
     for i in range(len(aList)):
         key = aList[i]
-        '''
-        #test usage!
-        if labelMapInt[key] not in labelDict:
-            labelDict[labelMapInt[key]] = 1
-        else:
-            labelDict[labelMapInt[key]] += 1
-        ''' 
+        
         #write prefixFile       
-        file.write(key + "\n")       
+        prefixResult.write(key + "\n") 
+        
         #write feature vector file
         label = labelMapInt[key]        
         result.write(str(label) + " ")  
@@ -79,33 +78,10 @@ def writeResult(commentVectors, labelMapInt, outputFile, prefixFile, type):
                     result.write(str(commentVectors[key][i]) + " ")
                 result.write("\n")
                 
-                # result.write(str(label) + " ")  
-                # for i in range(len(commentVectors[key])):
-                    # result.write(str(commentVectors[key][i]) + " ")
-                # result.write("\n")
-                
+    result.close()
+    
 
-        '''
-        #test usage!
-        if float(commentVectors[key][1]) + float(commentVectors[key][2]) > 1.0:
-            goodDict[key] = label
-            labelDict[label] += 1
-        '''
-    result.close()
-    '''
-    #test usage!
-    result = open("labelCount.txt", "w+")
-    for key in labelDict:
-        result.write(str(key) + "\t" + str(labelDict[key]) + "\n")
-    result.close()
-    
-    #test usage
-    result = open("goodCount.txt", "w+")
-    for key in goodDict:
-        result.write(str(key) + "\t" + str(goodDict[key]) + "\n")
-    result.close()
-    '''
-    
+#get feature vector and store in resultDict    
 def main(originalFile, w2vFile, w2vDimension, topicModelFile, topicModelDimension, infoInstance, tfidfInstance, hasUrlInstance):
 
     bowDict = {}
@@ -114,7 +90,6 @@ def main(originalFile, w2vFile, w2vDimension, topicModelFile, topicModelDimensio
     
     cuserComQuser = {}  #cid, 0 or 1, compared with quserid
     ansProDict = {}     #cid, category_cgold probability
-    userPostDict = {}   #cid, post probability 
     tfidfDict = {}      #cid, tfidfScore
     urlDict = {}
     
@@ -128,6 +103,7 @@ def main(originalFile, w2vFile, w2vDimension, topicModelFile, topicModelDimensio
     for directory in files:
         path = originalFile + directory
         fileList = [f for f in listdir(path) if isfile(join(path, f))]
+        
         #question file
         with open(path + "/" + directory, "r") as fin:
             s1 = fin.read()
@@ -150,16 +126,24 @@ def main(originalFile, w2vFile, w2vDimension, topicModelFile, topicModelDimensio
                 cuserComQuser[cid] = 1.0
             else:
                 cuserComQuser[cid] = 0.0           
-            userPostDict[cid] = infoInstance.userIdPro(cuserid)           
+           
+
+            '''
+            #notice, record the categoryAnsPro of train set first using following commands  
+            #after that you can use the command of "ansProDict[cid] = ansProInstance.getCategoryPro(qcategory)" in train, dev and test set
+            
             ansProDict[cid] = infoInstance.getCategoryAnsPro(qcategory)
-            # cg = open("categoryAnsProTrain.txt", "a+")
-            # cg.write(qcategory + "\t")
-            # for i in range(len(ansProDict[cid])):
-                # cg.write(str(ansProDict[cid][i]) + "\t")
-            # cg.write("\n")
+            cg = open("categoryAnsProTrain.txt", "a+")
+            cg.write(qcategory + "\t")
+            for i in range(len(ansProDict[cid])):
+                cg.write(str(ansProDict[cid][i]) + "\t")
+            cg.write("\n")
+            ''' 
+            
+            ansProDict[cid] = ansProInstance.getCategoryPro(qcategory)
             tfidfDict[cid] = tfidfInstance.getTfidfScore(cid)
             urlDict[cid] = hasUrlInstance.isExistUrl(cid) 
-              
+            
             completePath = path + "/" + each          
             with open(completePath, "r") as fin:
                 s2 = fin.read()
@@ -182,13 +166,8 @@ def main(originalFile, w2vFile, w2vDimension, topicModelFile, topicModelDimensio
                 t2 = tm.getProbability(each)
                 score = utility.cosine(t1, t2)
                 tmDict[each] = score
-                '''
-                print bowDict
-                print w2vDict
-                print tmDict
-                '''
-    print "bowDict, w2vDict, tmDict done!"
-    
+
+    print "bowDict, w2vDict, tmDict done!"    
     for key in bowDict:
         aList = []
         aList.append(bowDict[key])
@@ -205,7 +184,7 @@ def main(originalFile, w2vFile, w2vDimension, topicModelFile, topicModelDimensio
     
 
 if __name__ == '__main__':
-    if len(sys.argv) < 12:
+    if len(sys.argv) < 13:
         print "sys.argv[1]: original file path!"
         print "sys.argv[2}: w2v file"
         print "sys.argv[3]: w2v dimension"
@@ -217,12 +196,14 @@ if __name__ == '__main__':
         print "sys.argv[9]: prefix order file"
         print "sys.argv[10]: 0 for train,  1 for dev"
         print "sys.argv[11]: hasUrl file"
+        print "sys.argv[12]: categoryAnsProTrain file"
         exit()
     
     spInfo = Info(sys.argv[6])
+    ansProInstance = CategoryPro(sys.argv[12])
     tfidfInstance = Tfidf(sys.argv[8])
     hasUrlInstance = Url(sys.argv[11])
-    commentVectors = main(sys.argv[1], sys.argv[2], sys.argv[3], sys.argv[4], sys.argv[5], spInfo, tfidfInstance, hasUrlInstance)
+    commentVectors = main(sys.argv[1], sys.argv[2], sys.argv[3], sys.argv[4], sys.argv[5], spInfo, tfidfInstance, hasUrlInstance, ansProInstance)
     writeResult(commentVectors, spInfo.labelToInt(), sys.argv[7], sys.argv[9], sys.argv[10])
 
     

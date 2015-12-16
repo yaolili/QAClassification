@@ -1,7 +1,7 @@
 #-*- coding:utf-8 -*-
 # AUTHOR:   yaolili
 # FILE:     readW2V.py
-# ROLE:     TODO (some explanation)
+# ROLE:     read w2c file and you can get a sentence vector
 # CREATED:  2015-12-12 14:23:23
 # MODIFIED: 2015-12-12 14:23:31
 
@@ -10,16 +10,19 @@ import os
 import numpy as np
 from utility import Utility
 
+#the format of w2vFile is something like this:
+#word + \t + specific dimensions float numbers
+#eg: get + \t + 200 dimensions float numbers
+
 class W2V:
     
-    def __init__(self, inputFile, dimension):
+    def __init__(self, w2vFile, dimension):
         self.vector = {}
         self.dimension = int(dimension)
-        with open(inputFile) as fin:
+        with open(w2vFile) as fin:
             for lineNum, line in enumerate(fin):
                 aList = line.strip().split(" ")
                 if len(aList) < self.dimension:
-                    #print lineNum
                     continue
                 value = []
                 for i in range(1, len(aList)):
@@ -34,8 +37,6 @@ class W2V:
             array = np.array(tmpList)
             return array
         else:
-            #log = open("emptyVectorKey.txt", "a+")
-            #log.write(vectorKey + "\n")
             #Whole sentence may be empty if you return an empty array for a word
             #Thus it's invalid for division for cosine similarity
             #array = np.zeros(self.dimension)
@@ -50,12 +51,10 @@ class W2V:
             exit()
 
         arr1 = self.__tmpNumpyArray(aList[0])
-        #log = open("array.txt", "a+")
-        #log.write(str(arr1.tolist()) + "\n")
         for i in range(1, len(aList)):
             arr2 = self.__tmpNumpyArray(aList[i])
-            #log.write(str(arr2.tolist()) + "\n")
             arr1 = arr1 + arr2
-        return (arr1/len(aList)).tolist()    
         #print arr1/len(aList)
+        return (arr1/len(aList)).tolist()    
+        
 

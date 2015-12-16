@@ -1,4 +1,9 @@
 # -*- coding: utf-8 -*-
+# AUTHOR:   yaolili
+# FILE:     classification.py
+# ROLE:     use five classifiers in sklearn to classification
+# CREATED:  2015-12-14 19:58:53
+# MODIFIED: 2015-12-14 19:58:55
 
 import numpy as np
 import os,sys
@@ -13,12 +18,15 @@ from sklearn.metrics import  accuracy_score
 from sklearn.metrics import confusion_matrix    
 from sklearn.neighbors import KNeighborsClassifier
 
-
+#notice, we only use gbdt, essemble, tree, knn and svm classifier
+#you can add others if you need
 class Classification():
     def __init__(self, classifier, trainFile, devFile):
         f = open(trainFile)
         data = np.loadtxt(f)
-        X_train = data[:, 1:]  # select columns 1 through end
+        
+        # select columns 1 through end
+        X_train = data[:, 1:]  
         y_train = data[:, 0] 
         f.close()
             
@@ -26,9 +34,9 @@ class Classification():
         pre = np.loadtxt(f)
         X_test = pre[:, 1:]
         
-        X_test = Imputer().fit_transform(X_test)
-        
-        #test usage!
+        #fit transform if there exit NAN or INFINITE
+        #otherwise you'll get error when clf.predict()
+        X_test = Imputer().fit_transform(X_test) 
         if np.isnan(X_test).any():
             print "nan in X_test!"
             exit()
@@ -52,9 +60,11 @@ class Classification():
         
         clf.fit(X_train, y_train) 
         self.y_pred = clf.predict(X_test)
-        #self.calculate_result(self.y_test, self.y_pred)
-        #print( "ACC:  %f " %accuracy_score(y_test,y_pred))
-
+        '''
+        #test usage!
+        self.calculate_result(self.y_test, self.y_pred)
+        print( "ACC:  %f " %accuracy_score(y_test,y_pred))
+        '''
         
     def getPreResult(self, outputFile):
         fout = open(outputFile,"w+")
@@ -63,6 +73,7 @@ class Classification():
             fout.write(str(eachint)+"\n")
         fout.close()        
    
+    #this function is used for testing!
     def calculate_result(self):  
         m_precision = metrics.precision_score(self.y_test, self.y_pred)
         m_recall = metrics.recall_score(self.y_test, self.y_pred) 

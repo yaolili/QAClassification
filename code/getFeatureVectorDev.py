@@ -114,7 +114,6 @@ def main(originalFile, w2vFile, w2vDimension, topicModelFile, topicModelDimensio
     
     cuserComQuser = {}  #cid, 0 or 1, compared with quserid
     ansProDict = {}     #cid, category_cgold probability
-    userPostDict = {}   #cid, post probability 
     tfidfDict = {}      #cid, tfidfScore
     urlDict = {}
     
@@ -150,7 +149,7 @@ def main(originalFile, w2vFile, w2vDimension, topicModelFile, topicModelDimensio
                 cuserComQuser[cid] = 1.0
             else:
                 cuserComQuser[cid] = 0.0           
-            #userPostDict[cid] = infoInstance.userIdPro(cuserid)       
+      
             ansProDict[cid] = ansProInstance.getCategoryPro(qcategory)
             tfidfDict[cid] = tfidfInstance.getTfidfScore(cid)
             urlDict[cid] = hasUrlInstance.isExistUrl(cid) 
