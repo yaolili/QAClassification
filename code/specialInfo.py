@@ -5,7 +5,7 @@
 # CREATED:  2015-12-13 16:56:37
 # MODIFIED: 2015-12-16 08:47:43
 
-class Info:
+class trainInfo:
 
     def __init__(self, qcInfo):
         self.labelMapInt = {}

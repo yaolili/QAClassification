@@ -1,135 +1,113 @@
 #!/bin/sh
 # AUTHOR:   yaolili
 # FILE:     runSh.sh
-# ROLE:     TODO (some explanation)
+# ROLE:     run all command
 # CREATED:  2015-12-14 09:12:56
 # MODIFIED: 2015-12-14 09:13:04
 
 
-# print "sys.argv[1]: original file path!"
-# print "sys.argv[2}: w2v file"
-# print "sys.argv[3]: w2v dimension"
-# print "sys.argv[4]: topic model file"
-# print "sys.argv[5]: topic model dimension"
-# print "sys.argv[6]: qcInfo"
-# print "sys.argv[7]: format result file"
-# print "sys.argv[8]: tfidf file"
-# print "sys.argv[9]: prefix order file"
-# print "sys.argv[11]: hasUrl file"
-
 #train feature vector
-python getFeatureVector.py  ../pre/trainDirectory_2/ ../w2v/w2vTrain.vector 200 ../topicModel/trainDocTopics30.txt 30 ../info/qcInfo.train ../result/formatResult11D7_4.txt ../tfidf/tfidfTrain.txt ../order/prefixTrain.txt 0 hasUrlTrain.txt
+python getFeatureVector.py  ../pre/trainDirectory/ data/w2v/w2vTrain.vector 200 data/topicModel/trainDocTopics30.txt 30 data/qcInfo/qcInfo.train ../result/formatResult12D_4.txt data/tfidf/tfidfTrain.txt data/order/prefixTrain.txt 0 data/url/hasUrlTrain.txt data/categoryAnsProTrain.txt
 
 echo "train feature done!"
 
 #dev feature vector
-python getFeatureVectorDev.py ../pre/devDirectory/ ../w2v/w2vDev.vector 200 ../topicModel/devDocTopics30.txt 30 ../info/qcInfo.dev ../result/formatResultDev11D7_4.txt ../tfidf/tfidfDev.txt ../order/prefixDev.txt 1 hasUrlDev.txt categoryAnsProTrain.txt
+python getFeatureVector.py  ../pre/devDirectory/ data/w2v/w2vDev.vector 200 data/topicModel/devDocTopics30.txt 30 data/qcInfo/qcInfo.dev ../result/formatResultDev12D_4.txt data/tfidf/tfidfDev.txt data/order/prefixDev.txt 1 data/url/hasUrlDev.txt data/categoryAnsProTrain.txt
+
 echo "dev feature done!"
 
 #test feature vector
-# python getFeatureVectorDev.py ../pre/testDirectory/ ../w2v/w2vTest.vector 200 ../topicModel/testDocTopics30.txt 30 ../info/qcInfo.test ../result/formatResultTest11D7_4.txt ../tfidf/tfidfTest.txt ../order/prefixTest.txt 1 hasUrlTest.txt categoryAnsProTrain.txt
+python getFeatureVector.py  ../pre/testDirectory/ data/w2v/w2vTest.vector 200 data/topicModel/testDocTopics30.txt 30 data/qcInfo/qcInfo.test ../result/formatResultTest12D_4.txt data/tfidf/tfidfTest.txt data/order/prefixTest.txt 1 data/url/hasUrlTest.txt data/categoryAnsProTrain.txt
 
 # echo "test feature done!"
 
-# print "sys.argv[1]: classifier"
-# print "sys.argv[2]: trainFile"
-# print "sys.argv[3]: devFile"
-# print "sys.argv[4]: outputFile"
+echo "===============dev classification================="
 
-echo "===============dev===================="
 #classification for dev
-python runClassification.py gbdt ../result/formatResult11D7_4.txt ../result/formatResultDev11D7_4.txt ../order/labelDevGBDT11D7_4.txt
+python runClassification.py gbdt ../result/formatResult12D_4.txt ../result/formatResultDev12D_4.txt data/order/labelDevGBDT12D_4.txt
 
 echo "gbdt classification done!"
 
-python runClassification.py svm ../result/formatResult11D7_4.txt ../result/formatResultDev11D7_4.txt ../order/labelDevSVM11D7_4.txt
+python runClassification.py svm ../result/formatResult12D_4.txt ../result/formatResultDev12D_4.txt data/order/labelDevSVM12D_4.txt
 
 echo "svm classification done!"
 
-python runClassification.py knn ../result/formatResult11D7_4.txt ../result/formatResultDev11D7_4.txt ../order/labelDevKNN11D7_4.txt
+python runClassification.py knn ../result/formatResult12D_4.txt ../result/formatResultDev12D_4.txt data/order/labelDevKNN12D_4.txt
 
 echo "knn classification done!"
 
-python runClassification.py essemble ../result/formatResult11D7_4.txt ../result/formatResultDev11D7_4.txt ../order/labelDevESSEMBLE11D7_4.txt
+python runClassification.py essemble ../result/formatResult12D_4.txt ../result/formatResultDev12D_4.txt data/order/labelDevESSEMBLE12D_4.txt
 
 echo "essemble classification done!"
 
-python runClassification.py tree ../result/formatResult11D7_4.txt ../result/formatResultDev11D7_4.txt ../order/labelDevTREE11D7_4.txt
+python runClassification.py tree ../result/formatResult12D_4.txt ../result/formatResultDev12D_4.txt data/order/labelDevTREE12D_4.txt
 
 echo "tree classification done!"
 
-# print "sys.argv[1]: prefix order file"
-# print "sys.argv[2]: label order file"
-# print "sys.argv[3]: output file"
 
 #get dev prediction result
-python dealResult.py ../order/prefixDev.txt ../order/labelDevGBDT11D7_4.txt ../devPredict/devGBDT11D7_4.txt
+python dealResult.py data/order/prefixDev.txt data/order/labelDevGBDT12D_4.txt ../devPredict/devGBDT12D_4.txt
 
 echo "gbdt prediction done!"
 
-python dealResult.py ../order/prefixDev.txt ../order/labelDevSVM11D7_4.txt ../devPredict/devSVM11D7_4.txt
+python dealResult.py data/order/prefixDev.txt data/order/labelDevSVM12D_4.txt ../devPredict/devSVM12D_4.txt
 
 echo "svm prediction done!"
 
-python dealResult.py ../order/prefixDev.txt ../order/labelDevKNN11D7_4.txt ../devPredict/devKNN11D7_4.txt
+python dealResult.py data/order/prefixDev.txt data/order/labelDevKNN12D_4.txt ../devPredict/devKNN12D_4.txt
 
 echo "knn prediction done!"
 
-python dealResult.py ../order/prefixDev.txt ../order/labelDevESSEMBLE11D7_4.txt ../devPredict/devESSEMBLE11D7_4.txt
+python dealResult.py data/order/prefixDev.txt data/order/labelDevESSEMBLE12D_4.txt ../devPredict/devESSEMBLE12D_4.txt
 
 echo "essemble prediction done!"
 
-python dealResult.py ../order/prefixDev.txt ../order/labelDevTREE11D7_4.txt ../devPredict/devTREE11D7_4.txt
+python dealResult.py data/order/prefixDev.txt data/order/labelDevTREE12D_4.txt ../devPredict/devTREE12D_4.txt
 
 echo "tree prediction done!"
 
 
-# print "sys.argv[1]: classifier"
-# print "sys.argv[2]: trainFile"
-# print "sys.argv[3]: testFile"
-# print "sys.argv[4]: outputFile"
+echo "===============test classification================="
 
-# echo "===============test===================="
+#classification for test
+python runClassification.py gbdt ../result/formatResult12D_4.txt ../result/formatResultTest12D_4.txt data/order/labelTestGBDT12D_4.txt
 
-# #classification for test
-# python runClassification.py gbdt ../result/formatResult11D7_4.txt ../result/formatResultTest11D7_4.txt ../order/labelTestGBDT11D7_4.txt
+echo "gbdt classification done!"
 
-# echo "gbdt classification done!"
+python runClassification.py svm ../result/formatResult12D_4.txt ../result/formatResultTest12D_4.txt data/order/labelTestSVM12D_4.txt
 
-# python runClassification.py svm ../result/formatResult11D7_4.txt ../result/formatResultTest11D7_4.txt ../order/labelTestSVM11D7_4.txt
+echo "svm classification done!"
 
-# echo "svm classification done!"
+python runClassification.py knn ../result/formatResult12D_4.txt ../result/formatResultTest12D_4.txt data/order/labelTestKNN12D_4.txt
 
-# python runClassification.py knn ../result/formatResult11D7_4.txt ../result/formatResultTest11D7_4.txt ../order/labelTestKNN11D7_4.txt
+echo "knn classification done!"
 
-# echo "knn classification done!"
+python runClassification.py essemble ../result/formatResult12D_4.txt ../result/formatResultTest12D_4.txt data/order/labelTestESSEMBLE12D_4.txt
 
-# python runClassification.py essemble ../result/formatResult11D7_4.txt ../result/formatResultTest11D7_4.txt ../order/labelTestESSEMBLE11D7_4.txt
+echo "essemble classification done!"
 
-# echo "essemble classification done!"
+python runClassification.py tree ../result/formatResult12D_4.txt ../result/formatResultTest12D_4.txt data/order/labelTestTREE12D_4.txt
 
-# python runClassification.py tree ../result/formatResult11D7_4.txt ../result/formatResultTest11D7_4.txt ../order/labelTestTREE11D7_4.txt
-
-# echo "tree classification done!"
+echo "tree classification done!"
     
     
-# #get test prediction result
-# python dealResult.py ../order/prefixTest.txt ../order/labelTestGBDT11D7_4.txt ../testPredict/testGBDT.txt
+#get test prediction result
+python dealResult.py data/order/prefixTest.txt data/order/labelTestGBDT12D_4.txt ../testPredict/testGBDT12D_4.txt
 
-# echo "gbdt prediction done!"
+echo "gbdt prediction done!"
 
-# python dealResult.py ../order/prefixTest.txt ../order/labelTestSVM11D7_4.txt ../testPredict/testSVM.txt
+python dealResult.py data/order/prefixTest.txt data/order/labelTestSVM12D_4.txt ../testPredict/testSVM12D_4.txt
 
-# echo "svm prediction done!"
+echo "svm prediction done!"
 
-# python dealResult.py ../order/prefixTest.txt ../order/labelTestKNN11D7_4.txt ../testPredict/testKNN11D7_4.txt
+python dealResult.py data/order/prefixTest.txt data/order/labelTestKNN12D_4.txt ../testPredict/testKNN12D_4.txt
 
-# echo "knn prediction done!"
+echo "knn prediction done!"
 
-# python dealResult.py ../order/prefixTest.txt ../order/labelTestESSEMBLE11D7_4.txt ../testPredict/testESSEMBLE11D7_4.txt
+python dealResult.py data/order/prefixTest.txt data/order/labelTestESSEMBLE12D_4.txt ../testPredict/testESSEMBLE12D_4.txt
 
-# echo "essemble prediction done!"
+echo "essemble prediction done!"
 
-# python dealResult.py ../order/prefixTest.txt ../order/labelTestTREE11D7_4.txt ../testPredict/testTREE11D7_4.txt
+python dealResult.py data/order/prefixTest.txt data/order/labelTestTREE12D_4.txt ../testPredict/testTREE12D_4.txt
 
-# echo "tree prediction done!" 
+echo "tree prediction done!" 

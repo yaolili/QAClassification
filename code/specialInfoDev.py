@@ -1,6 +1,6 @@
 #-*- coding:utf-8 -*-
 # AUTHOR:   yaolili
-# FILE:     specialInfo.py
+# FILE:     specialInfoDev.py
 # ROLE:     used for dev & test set
 # CREATED:  2015-12-13 16:56:37
 # MODIFIED: 2015-12-13 16:56:41
@@ -11,7 +11,7 @@ class Info:
         #self.labelMapInt = {}
         self.cidMapQid = {}
         self.cidMapCuserid = {}
-        self.cidMapCgold = {}
+        #self.cidMapCgold = {}
         self.qidMapQuserid = {}
         self.qidMapCategory = {}
         #self.categoryAnsPro = {}
@@ -66,12 +66,6 @@ class Info:
             print "Invalid cid in Class Info cidToCuserid()!"
             exit()
         return self.cidMapCuserid[cid]
-    
-    def cidToCgold(self, cid):
-        if cid not in self.cidMapCgold:
-            print "Invalid cid in Class Info cidMapCgold()!"
-            exit()
-        return self.cidMapCgold[cid]
         
     
     def qidToCategory(self, qid):

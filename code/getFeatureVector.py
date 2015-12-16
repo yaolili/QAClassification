@@ -14,8 +14,10 @@ from bagOfWords import BOW
 from utility import Utility
 from readW2V import W2V
 from readTopicModel import TopicModel
-from specialInfo import Info    
+from specialInfo import trainInfo  
+from specialInfoDev import Info   
 from readTFIDF import Tfidf
+from readCategoryPro import CategoryPro
 from hasUrl import Url
  
 #notice, it's nessary to sort keyOrderList(that is cid list)
@@ -46,7 +48,8 @@ def sort(keyOrderList):
     return result
 
 #write feature vector file
-def writeResult(commentVectors, labelMapInt, outputFile, prefixFile, type):
+#notice, labelMapInt = None for dev & test set, otherwise for train test
+def writeResult(commentVectors, outputFile, prefixFile, type, labelMapInt = None):
     if not (type == "1" or type == "0"):
         print "Invalid type in writeResult()!"
         exit()
@@ -63,8 +66,13 @@ def writeResult(commentVectors, labelMapInt, outputFile, prefixFile, type):
         prefixResult.write(key + "\n") 
         
         #write feature vector file
-        label = labelMapInt[key]        
-        result.write(str(label) + " ")  
+        if labelMapInt is None:
+            
+            result.write("1.0" + " ")
+        else:
+            label = labelMapInt[key]        
+            result.write(str(label) + " ")
+        
         for i in range(len(commentVectors[key])):
             result.write(str(commentVectors[key][i]) + " ")
         result.write("\n")
@@ -82,7 +90,7 @@ def writeResult(commentVectors, labelMapInt, outputFile, prefixFile, type):
     
 
 #get feature vector and store in resultDict    
-def main(originalFile, w2vFile, w2vDimension, topicModelFile, topicModelDimension, infoInstance, tfidfInstance, hasUrlInstance):
+def main(originalFile, w2vFile, w2vDimension, topicModelFile, topicModelDimension, infoInstance, tfidfInstance, hasUrlInstance, ansProInstance):
 
     bowDict = {}
     w2vDict = {}
@@ -199,12 +207,21 @@ if __name__ == '__main__':
         print "sys.argv[12]: categoryAnsProTrain file"
         exit()
     
-    spInfo = Info(sys.argv[6])
+    #notice the difference between train set and dev, test set
+    if sys.argv[10] == "0":
+        spInfo = trainInfo(sys.argv[6])
+    else:
+        spInfo = Info(sys.argv[6])
+        
     ansProInstance = CategoryPro(sys.argv[12])
     tfidfInstance = Tfidf(sys.argv[8])
     hasUrlInstance = Url(sys.argv[11])
     commentVectors = main(sys.argv[1], sys.argv[2], sys.argv[3], sys.argv[4], sys.argv[5], spInfo, tfidfInstance, hasUrlInstance, ansProInstance)
-    writeResult(commentVectors, spInfo.labelToInt(), sys.argv[7], sys.argv[9], sys.argv[10])
+    
+    if sys.argv[10] == "0":
+        writeResult(commentVectors, sys.argv[7], sys.argv[9], sys.argv[10], spInfo.labelToInt())
+    else:
+        writeResult(commentVectors, sys.argv[7], sys.argv[9], sys.argv[10])
 
     
 
