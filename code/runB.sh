@@ -5,6 +5,8 @@
 # CREATED:  2015-12-17 11:07:14
 # MODIFIED: 2015-12-17 11:07:43
 
+echo "=================dev classification==================="
+
 python runClassification.py gbdt data/yn/formatResult/finalFormat/baseQAllFeature_train.txt data/yn/formatResult/finalFormat/baseQAllFeature_dev.txt data/yn/orderorderYNDevGBDT.txt
 
 python runClassification.py essemble data/yn/formatResult/finalFormat/baseQAllFeature_train.txt data/yn/formatResult/finalFormat/baseQAllFeature_dev.txt data/yn/orderorderYNDevESSEMBLE.txt
@@ -14,6 +16,8 @@ python runClassification.py tree data/yn/formatResult/finalFormat/baseQAllFeatur
 python runClassification.py knn data/yn/formatResult/finalFormat/baseQAllFeature_train.txt data/yn/formatResult/finalFormat/baseQAllFeature_dev.txt data/yn/orderorderYNDevKNN.txt
 
 python runClassification.py svm data/yn/formatResult/finalFormat/baseQAllFeature_train.txt data/yn/formatResult/finalFormat/baseQAllFeature_dev.txt data/yn/orderorderYNDevSVM.txt
+
+echo "=================dev prediction result==================="
 
 python dealResultYN.py data/yn/prefix/prefixDevYN.txt data/yn/orderorderYNDevGBDT.txt data/yn/devPredict/devGBDTYN.txt
 
