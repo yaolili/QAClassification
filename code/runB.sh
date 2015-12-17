@@ -15,7 +15,7 @@ python runClassification.py knn data/yn/formatResult/finalFormat/baseQAllFeature
 
 python runClassification.py svm data/yn/formatResult/finalFormat/baseQAllFeature_train.txt data/yn/formatResult/finalFormat/baseQAllFeature_dev.txt data/yn/orderorderYNDevSVM.txt
 
-python dealResultYN.py data/yn/prefix/prefixDevYN.txt data/yn/orderorderYNDevGBDT.txt devGBDTYN.txt
+python dealResultYN.py data/yn/prefix/prefixDevYN.txt data/yn/orderorderYNDevGBDT.txt data/yn/devPredict/devGBDTYN.txt
 
 python dealResultYN.py data/yn/prefix/prefixDevYN.txt data/yn/orderorderYNDevESSEMBLE.txt data/yn/devPredict/devESSEMBLEYN.txt
 
