@@ -46,14 +46,19 @@ class Classification():
         
         if classifier == 'tree':
             clf = tree.DecisionTreeClassifier()
+            #print clf
         elif classifier == 'knn':
             clf = KNeighborsClassifier()
+            #print clf
         elif classifier == 'svm':
             clf = svm.SVC(kernel='rbf')
+            #print clf
         elif classifier == 'gbdt':
             clf = GradientBoostingClassifier()
+            #print clf
         elif classifier == 'essemble':
             clf = RandomForestClassifier(n_estimators=10)
+            #print clf
         else:
             print "Invalid classifier in Class Classification __init__()!"
             exit()

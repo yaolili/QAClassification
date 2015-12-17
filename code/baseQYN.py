@@ -3,11 +3,12 @@
 # FILE:     baseQYN.py
 # ROLE:     TODO (some explanation)
 # CREATED:  2015-12-16 21:19:37
-# MODIFIED: 2015-12-16 21:19:39
+# MODIFIED: 2015-12-17 10:21:01
 
 import copy
 
-#cid, all feature 
+#cid, all feature
+
 class BaseQYN:
     def __init__(self, ynAllFeatureFile):
         self.cidDict = {}
@@ -48,7 +49,8 @@ class BaseQYN:
                 tmpList[i] = float(tmpList[i]) / num
             self.qidDict[tmp] = tmpList
             
-            
+            #here can be "prefixTrainYN.txt", "prefixDevYN.txt" for result1
+            #and "baseQAllFeature_train.txt", "baseQAllFeature_dev.txt" are also ok with log
             result1 = open("prefixTestYN.txt", "w+")
             log = open("baseQAllFeature_test.txt", "w+")
             for i in range(len(self.qidList)):

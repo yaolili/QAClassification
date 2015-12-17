@@ -67,22 +67,6 @@ def writeResult(commentVectors, prefixFile, type, outputFile):
         for i in range(len(commentVectors[key])):
             result.write(str(commentVectors[key][i]) + "\t")
         result.write("\n")
-        
-        #negative sampling in training
-        #label 4 or 5 double write the ones whose w2v score plus topic model score > 1.0
-        # if type == "0":
-            # if float(commentVectors[key][1]) + float(commentVectors[key][2]) > 1.0 and (label == 4):
-                # result.write(str(label) + " ")  
-                # for i in range(len(commentVectors[key])):
-                    # result.write(str(commentVectors[key][i]) + " ")
-                # result.write("\n")
-                
-                # result.write(str(label) + " ")  
-                # for i in range(len(commentVectors[key])):
-                    # result.write(str(commentVectors[key][i]) + " ")
-                # result.write("\n")
-                
-
 
     result.close()
     

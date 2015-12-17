@@ -3,7 +3,7 @@
 # FILE:     readYNFile.py
 # ROLE:     TODO (some explanation)
 # CREATED:  2015-12-16 19:17:31
-# MODIFIED: 2015-12-16 19:17:32
+# MODIFIED: 2015-12-17 10:15:16
 
 class YNFeature:
     def __init__(self, ynFile):
@@ -21,14 +21,6 @@ class YNFeature:
                     self.cidMap[cid] = 0
                     self.cidList.append(cid)
     
-    
-    def getYNFeature(self, cid):
-        if cid not in self.cidDict:
-            print "Invalid cid in Class YNFeature getYNFeature()!"
-            exit()
-            
-        return self.cidDict[cid]
-        
         
     def getCidList(self):
         return self.cidList
